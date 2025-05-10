@@ -3,44 +3,55 @@ package com.longg;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import com.longg.db.Database;
+import com.longg.dto.Cart;
+import com.longg.dto.CartItem;
+import com.longg.dto.Product;
+import com.longg.service.AuthenService;
+import com.longg.service.ShoppingCartService;
+
 public class Main {
 
 	static Cart cart;
 	static Scanner scan = new Scanner(System.in);
+	private static final int VIEW_CART_OPTION_ON_MENU = 0;
+
+	private static ShoppingCartService cartService = new ShoppingCartService();
+	private static AuthenService authenService = new AuthenService();
 
 	public static void main(String[] args) {
 
 		boolean isLoggedin;
+
 		do {
 			isLoggedin = doLogin();
-		} while (isLoggedin == false);
-		showProducts();
-		// addProductToCart
+		} while (!isLoggedin);
 
-		// let user input the number (product)
-		System.out.print("Enter Product Number: ");
-		int productNumber = scan.nextInt();
+		do {
+			showMenu();
 
-		Product selectedProduct = Database.PRODUCT_DB.get(productNumber - 1);
-		CartItem item = new CartItem(selectedProduct);
-		cart.items.add(item);
+			System.out.print("Enter An Option: ");
+			int option = scan.nextInt();
+			scan.nextLine();
 
-		System.out.println(cart.items.toString());
+			if (option == VIEW_CART_OPTION_ON_MENU) {
+				cartService.showCart(cart);
+			} else {
+				doAddProductToCart(option);
+			}
 
-		for (CartItem i : cart.items) {
-			System.out.println(i.name + " = " + i.price);
-		}
+		} while (true);
 	}
 
-	private static void showProducts() {
-		for (int i = 0; i < Database.CUSTOMER_DB.size(); i++) {
+	private static void showMenu() {
+		System.out.println("0. View Cart");
+		for (int i = 0; i < Database.PRODUCT_DB.size(); i++) {
 			System.out.println(
 					(i + 1) + ". " + Database.PRODUCT_DB.get(i).name + " : " + Database.PRODUCT_DB.get(i).price);
 		}
 	}
 
 	private static boolean doLogin() {
-		// user input username + password
 		System.out.print("Enter ID: ");
 		String userID = scan.nextLine();
 
@@ -48,14 +59,23 @@ public class Main {
 		System.out.print("Enter Password: ");
 		String userPassword = scan.nextLine();
 
-		for (Customer c : Database.CUSTOMER_DB) {
-			if (c.id.equals(userID) && c.password.equals(userPassword)) {
-				cart = new Cart();
-				cart.items = new ArrayList<CartItem>();
-				return true;
-			}
+		boolean isLoggedin = authenService.login(userID, userPassword);
+		if (isLoggedin) {
+			cart = new Cart();
+			cart.items = new ArrayList<CartItem>();
 		}
-		return false;
+		return isLoggedin;
+	}
+
+	private static void doAddProductToCart(int productIndex) {
+		Product selectedProduct = Database.PRODUCT_DB.get(productIndex - 1);
+
+		System.out.print("Enter quantity : ");
+		int quantity = Integer.parseInt(scan.nextLine());
+
+		cartService.addToCart(cart, selectedProduct, quantity);
+
+		System.out.println("Added succesfully.");
 	}
 
 }

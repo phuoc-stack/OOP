@@ -1,9 +1,9 @@
-package com.longg;
+package com.longg.dto;
 
 public class Customer {
 
-	String id;
-	String password;
+	public String id;
+	public String password;
 
 	public Customer() {
 		// TODO Auto-generated constructor stub
