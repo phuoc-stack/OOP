@@ -4,18 +4,19 @@ import java.util.ArrayList;
 
 import com.longg.db.Database;
 import com.longg.dto.Customer;
+import com.longg.dto.Shop;
 
 // service class -> contain functions 
 public class AuthenService {
 
 	// login
-	public boolean login(String id, String password) {
-		for (Customer c : Database.CUSTOMER_DB) {
+	public Customer login(Shop shop, String id, String password) {
+		for (Customer c : shop.customers) {
 			if (c.id.equals(id) && c.password.equals(password)) {
-				return true;
+				return c;
 			}
 		}
-		return false;
+		return null;
 	}
 
 	// logout

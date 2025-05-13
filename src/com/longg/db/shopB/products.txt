@@ -1,0 +1,5 @@
+product, price
+flat white,2
+latte,4
+cappuccino,3
+americano,3

@@ -1,0 +1,5 @@
+product, price
+milktea,5
+matcha,4
+pudding,1
+pearls,1
