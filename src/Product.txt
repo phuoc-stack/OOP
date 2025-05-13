@@ -1,0 +1,4 @@
+Coffee,5,Shop1
+Cookie,7,Shop1
+Toast,6,Shop2
+Milk,3,Shop2
