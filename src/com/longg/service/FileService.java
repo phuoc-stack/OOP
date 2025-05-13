@@ -7,7 +7,7 @@ import com.longg.dto.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class DatabaseService {
+public class FileService {
 	
 	public static ArrayList<Customer> readCustomerFile(String filename) {
 		try {

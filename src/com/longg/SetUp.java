@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import com.longg.dto.Shop;
 import com.longg.dto.rank.ShopARankingSystem;
-import com.longg.service.DatabaseService;
+import com.longg.service.FileService;
 public class SetUp {
 	
 	public static final ArrayList<Shop> SHOPS = new ArrayList<>();
@@ -27,8 +27,8 @@ public class SetUp {
 	
 	public static Shop initShop(String customerFile, String productFile) {
 		Shop shop = new Shop();
-		shop.customers = DatabaseService.readCustomerFile(customerFile);
-		shop.products = DatabaseService.readProductFile(productFile);
+		shop.customers = FileService.readCustomerFile(customerFile);
+		shop.products = FileService.readProductFile(productFile);
 		return shop;
 	}
 	
