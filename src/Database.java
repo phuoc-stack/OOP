@@ -84,27 +84,3 @@ public class Database {
 		}
 	}
 }
-
-//		CUSTOMER_DB.add(new Customer("1", "1", "gold"));
-//		CUSTOMER_DB.add(new Customer("2", "2", "silver"));
-//
-//		PRODUCT_DB.add(new Product("Coffee", 5));
-//		PRODUCT_DB.add(new Product("Cookie", 7));
-//		PRODUCT_DB.add(new Product("Toast", 6));
-//		PRODUCT_DB.add(new Product("Milk", 3));
-//		
-//		
-//		
-//		ProductList shop1Products = new ProductList();
-//		ProductList shop2Products = new ProductList();
-//		
-//		shop1Customers.addCustomer(CUSTOMER_DB.get(0));
-//		shop2Customers.addCustomer(CUSTOMER_DB.get(1));
-//		
-//		shop1Products.addProduct(PRODUCT_DB.get(0));
-//		shop1Products.addProduct(PRODUCT_DB.get(1));
-//		shop2Products.addProduct(PRODUCT_DB.get(2));
-//		shop2Products.addProduct(PRODUCT_DB.get(3));
-//		
-//		SHOP_DB.add(new Shop("Shop 1", shop1Customers, shop1Products));
-//		SHOP_DB.add(new Shop("Shop 2", shop2Customers, shop2Products));
