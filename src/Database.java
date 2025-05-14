@@ -13,7 +13,6 @@ public class Database {
 	static {
 		CustomerList shop1Customers = new CustomerList();
 		CustomerList shop2Customers = new CustomerList();
-		// path to text file
 		try {
 			String filePathCustomer = "src/Customer.txt";
 			BufferedReader br = new BufferedReader(new FileReader(filePathCustomer));
