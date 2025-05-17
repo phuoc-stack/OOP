@@ -15,7 +15,7 @@ public enum ShopARankingSystem implements RankingSystem {
 
 
 	@Override
-	public float applyRankPromo(float price, float shippingFee) {
+	public float applyRankPromo(float price, float shippingFee, boolean hasVoucher) {
 		switch (this) {
 		case DIAMOND:
 			price *= 0.97f;
@@ -30,7 +30,14 @@ public enum ShopARankingSystem implements RankingSystem {
 			break;
 		
 		}
-		return price + shippingFee;
+		float total = price + shippingFee;
+		
+		if (hasVoucher) {
+	        total -= 1;
+	    }
+		
+		return total;
+		
 	}
 
 
@@ -42,4 +49,7 @@ public enum ShopARankingSystem implements RankingSystem {
 	}
 	
 
+	public static RankingSystem getRankByName(String rankString) {
+		return valueOf(rankString);
+	}
 }

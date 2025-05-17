@@ -1,3 +1,0 @@
-id,password
-abc,123
-bdc,234

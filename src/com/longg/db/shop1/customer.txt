@@ -1,0 +1,5 @@
+id,password
+abc,123,NONE
+bdc,234,DIAMOND
+a,123,GOLD
+b,123,NONE

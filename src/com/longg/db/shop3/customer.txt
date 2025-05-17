@@ -1,0 +1,3 @@
+id,password,rank
+c,123,DIAMOND
+d,123,NONE

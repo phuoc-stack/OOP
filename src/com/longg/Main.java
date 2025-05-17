@@ -3,31 +3,38 @@ package com.longg;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import com.longg.db.Database;
+import com.longg.common.CheckoutContext;
+import com.longg.common.Storage;
 import com.longg.dto.Cart;
 import com.longg.dto.CartItem;
 import com.longg.dto.Customer;
 import com.longg.dto.Product;
 import com.longg.dto.Shop;
 import com.longg.service.AuthenService;
+import com.longg.service.ProductService;
+import com.longg.service.ShopService;
 import com.longg.service.ShoppingCartService;
+import com.longg.service.EmailService;
+import com.longg.service.LogService;
 
 public class Main {
 
 	static Cart cart;
-	static Shop shop;
+	static Shop selectedShop;
 	static Customer customer;
 	static Scanner scan = new Scanner(System.in);
-	private static final int VIEW_CART_OPTION_ON_MENU = 0;
-
+	private static final int VIEW_CART_OPTION_ON_MENU = 1;
+	private static final int EXIT_OPTION_ON_MENU = 0;
 	private static ShoppingCartService cartService = new ShoppingCartService();
 	private static AuthenService authenService = new AuthenService();
 
 	public static void main(String[] args) {
 
 		boolean isLoggedin;
-		
-		selectShop();
+		boolean isExiting = false;
+
+		selectedShop = selectShop();
+		Storage.currentShop = selectedShop;
 
 		do {
 			isLoggedin = doLogin();
@@ -41,49 +48,48 @@ public class Main {
 			scan.nextLine();
 
 			if (option == VIEW_CART_OPTION_ON_MENU) {
-				cartService.showCart(cart);
-				cartService.showCost(cart, shop, customer);
+//				cartService.showCart(cart);
+//				cartService.showCost(cart, selectedShop, customer, scan);
+				CheckoutContext checkoutContext = new CheckoutContext(cart, selectedShop, customer, scan);
+
+				selectedShop.checkOut(cartService, checkoutContext);
+			} else if (option == EXIT_OPTION_ON_MENU) {
+				isExiting = true;
 			} else {
 				doAddProductToCart(option);
 			}
-
-		} while (true);
+		} while (isLoggedin & !isExiting);
 	}
-	
-	
-	private static void selectShop() {
-		showShops();
-		
+
+	private static Shop selectShop() {
+		ShopService shopService = new ShopService();
+		ArrayList<Shop> shops = shopService.getAllShops();
+
+		System.out.println("============ Shops ==========");
+		for (int i = 0; i < shops.size(); i++) {
+			System.out.println((i + 1) + ". " + shops.get(i).name);
+		}
+
+		System.out.println("=============================");
+
 		System.out.print("Enter An Option: ");
 		int option = scan.nextInt();
 		scan.nextLine();
-		shop = SetUp.SHOPS.get(option-1);
-		
-		System.out.println("-------- Welcome to shop " + shop.name + "----------");
-		
-		
-		
+
+		System.out.println("-------- Welcome to " + shops.get(option - 1).name + "----------");
+
+		return shops.get(option - 1);
 	}
-	
-	
-	private static void showShops() {
-		System.out.println("============ Shops ==========");
-		for (int i = 0; i < SetUp.SHOPS.size(); i++) {
-			System.out.println((i+1) + ". " + SetUp.SHOPS.get(i).name);
-		}
-		
-		System.out.println("=============================");
-	}
-	
-	
 
 	private static void showMenu() {
-		System.out.println("=========== Menu ============ ");
-		System.out.println("0. View Cart");
-		for (int i = 0; i < shop.products.size(); i++) {
-			System.out.println(
-					(i + 1) + ". " + shop.products.get(i).name + " : " + shop.products.get(i).price);
+		ProductService productService = new ProductService();
+		ArrayList<Product> products = productService.getProducts();
+		System.out.println("\n=========== Menu ============ ");
+		System.out.println("1. View Cart");
+		for (int i = 0; i < products.size(); i++) {
+			System.out.println((i + 2) + ". " + products.get(i).name + " : " + products.get(i).price);
 		}
+		System.out.println("Press 0 to exit");
 	}
 
 	private static boolean doLogin() {
@@ -93,21 +99,25 @@ public class Main {
 		// Enter Password
 		System.out.print("Enter Password: ");
 		String userPassword = scan.nextLine();
-		
+
 		boolean isLoggedin = false;
-		
-		customer = authenService.login(shop, userID, userPassword);
+
+		customer = authenService.login(userID, userPassword);
 		if (customer != null) {
 			cart = new Cart();
-			cart.items = new ArrayList<CartItem>();
+			Storage.currentCart = cart;
 			isLoggedin = true;
-			
+			customer.initializeRank(selectedShop);
+			selectedShop.handleSuccessfulLogin(customer);
 		}
 		return isLoggedin;
 	}
 
 	private static void doAddProductToCart(int productIndex) {
-		Product selectedProduct = shop.products.get(productIndex - 1);
+		ProductService productService = new ProductService();
+		ArrayList<Product> products = productService.getProducts();
+
+		Product selectedProduct = productService.getProducts().get(productIndex - 2);
 
 		System.out.print("Enter quantity : ");
 		int quantity = Integer.parseInt(scan.nextLine());

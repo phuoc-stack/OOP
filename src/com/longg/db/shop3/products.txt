@@ -1,0 +1,4 @@
+product, price
+orange juice,4
+coca,3
+mountain dew,4

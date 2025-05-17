@@ -1,10 +1,13 @@
 package com.longg.service;
 
+import com.longg.dto.rank.*;
+import com.longg.common.CheckoutContext;
 import com.longg.dto.Cart;
 import com.longg.dto.CartItem;
 import com.longg.dto.Customer;
 import com.longg.dto.Product;
 import com.longg.dto.Shop;
+import java.util.Scanner;
 
 public class ShoppingCartService {
 
@@ -29,7 +32,7 @@ public class ShoppingCartService {
 
 	public void showCart(Cart cart) {
 		if (cart.items.size() == 0) {
-			System.out.println("Your cart is empty");
+			System.out.println("\nYour cart is empty");
 			return;
 		}
 		for (CartItem i : cart.items) {
@@ -51,25 +54,35 @@ public class ShoppingCartService {
 		return 5;
 	}
 	
-	public float calculateFinalCost(Cart cart, Shop s, Customer c) {
-		float cost = calculateInitialCost(cart);
-		float shippingFee = calculateShippingFee(s, c);
-		
+	public float calculateFinalCost(CheckoutContext context, boolean hasVoucher) {
+		float cost = calculateInitialCost(context.cart);
+		float shippingFee = calculateShippingFee(context.shop, context.customer);
+			    
 		// apply rank promo if possible
-		if (c.rank == null) {
+		if (context.customer.rank == null) {
 			return cost + shippingFee;
 		}
 		
-		return c.rank.applyRankPromo(cost, shippingFee);
+		return context.customer.rank.applyRankPromo(cost, shippingFee, hasVoucher);
 	}
 	
-	public void showCost(Cart cart, Shop s, Customer c) {
-		System.out.println("Cost " + calculateInitialCost(cart));
-		System.out.println("Shipping fee " + calculateShippingFee(s, c));
+	public float showCost(CheckoutContext context) {
+		boolean hasVoucher = false;
 		
-		if (c.rank != null) {
-			System.out.println("Rank promo applied: " + c.rank.getDescription());
+		System.out.println("Subtotal " + calculateInitialCost(context.cart));
+		System.out.println("Shipping fee " + calculateShippingFee(context.shop, context.customer));
+		
+		if (context.customer.rank != null) {
+			System.out.println("Rank promo to apply: " + context.customer.rank.getDescription());
 		}
-		System.out.println("Total cost " +  calculateFinalCost(cart, s, c));
+		System.out.println("Do you have voucher AAA? (Y/N) ");
+	    String payOption = context.scan.nextLine();
+	    if (payOption.equalsIgnoreCase("Y")) {
+	    	hasVoucher = true; 
+	    	System.out.println("Voucher discount: -1.0");
+	    }
+		
+	    float total = calculateFinalCost(context, hasVoucher);
+	    return total;
 	}
 }
