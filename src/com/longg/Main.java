@@ -6,16 +6,14 @@ import java.util.Scanner;
 import com.longg.common.CheckoutContext;
 import com.longg.common.Storage;
 import com.longg.dto.Cart;
-import com.longg.dto.CartItem;
 import com.longg.dto.Customer;
 import com.longg.dto.Product;
 import com.longg.dto.Shop;
 import com.longg.service.AuthenService;
+import com.longg.service.CheckOutService;
 import com.longg.service.ProductService;
 import com.longg.service.ShopService;
 import com.longg.service.ShoppingCartService;
-import com.longg.service.EmailService;
-import com.longg.service.LogService;
 
 public class Main {
 
@@ -26,7 +24,8 @@ public class Main {
 	private static final int VIEW_CART_OPTION_ON_MENU = 1;
 	private static final int EXIT_OPTION_ON_MENU = 0;
 	private static ShoppingCartService cartService = new ShoppingCartService();
-	private static AuthenService authenService = new AuthenService();
+	private static AuthenService authenService = null;
+	private static CheckOutService checkoutService = null;
 
 	public static void main(String[] args) {
 
@@ -35,6 +34,8 @@ public class Main {
 
 		selectedShop = selectShop();
 		Storage.currentShop = selectedShop;
+		
+		authenService = AuthenService.assignAuthenService(selectedShop);
 
 		do {
 			isLoggedin = doLogin();
@@ -48,11 +49,10 @@ public class Main {
 			scan.nextLine();
 
 			if (option == VIEW_CART_OPTION_ON_MENU) {
-//				cartService.showCart(cart);
-//				cartService.showCost(cart, selectedShop, customer, scan);
-				CheckoutContext checkoutContext = new CheckoutContext(cart, selectedShop, customer, scan);
+			CheckoutContext checkoutContext = new CheckoutContext(cart, selectedShop, customer, scan);
 
-				selectedShop.checkOut(cartService, checkoutContext);
+			checkoutService = CheckOutService.assignCheckOutService(selectedShop);
+			checkoutService.handleCheckOut(cartService, checkoutContext);
 			} else if (option == EXIT_OPTION_ON_MENU) {
 				isExiting = true;
 			} else {
@@ -102,13 +102,14 @@ public class Main {
 
 		boolean isLoggedin = false;
 
-		customer = authenService.login(userID, userPassword);
+		customer = AuthenService.login(userID, userPassword);
 		if (customer != null) {
 			cart = new Cart();
 			Storage.currentCart = cart;
 			isLoggedin = true;
 			customer.initializeRank(selectedShop);
-			selectedShop.handleSuccessfulLogin(customer);
+//			selectedShop.handleSuccessfulLogin(customer);
+			authenService.handleSuccessfulLogin(customer);
 		}
 		return isLoggedin;
 	}
