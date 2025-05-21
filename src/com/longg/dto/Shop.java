@@ -23,13 +23,4 @@ public class Shop {
 		this.dbPath = dbPath;
 
 	}
-
-//	public void handleSuccessfulLogin(Customer customer) {
-//
-//	}
-//
-//	public void checkOut(ShoppingCartService cartService, CheckoutContext context) {
-//		// TODO Auto-generated method stub
-//		
-//	}
 }

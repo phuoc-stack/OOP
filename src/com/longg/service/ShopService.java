@@ -41,16 +41,7 @@ public class ShopService {
 		rowScanner.close();
 
 		int shopId = Integer.parseInt(id);
-
-//		if (shopId == 1) {
-//			shop = new Shop1(shopId,name,dbPath);
-//		}
-//		else if (shopId == 2) {
-//			shop = new Shop2(shopId,name,dbPath);
-//		}
-//		else {
-//			shop = new Shop3(shopId,name,dbPath);
-//		}
+		
 		shop = new Shop(shopId, name, dbPath);
 		return shop;
 	}

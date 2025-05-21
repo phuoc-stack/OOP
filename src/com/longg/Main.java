@@ -108,7 +108,6 @@ public class Main {
 			Storage.currentCart = cart;
 			isLoggedin = true;
 			customer.initializeRank(selectedShop);
-//			selectedShop.handleSuccessfulLogin(customer);
 			authenService.handleSuccessfulLogin(customer);
 		}
 		return isLoggedin;
